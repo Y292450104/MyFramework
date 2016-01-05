@@ -3,9 +3,10 @@ package com.my.framework.init;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -19,8 +20,9 @@ public class ComponentScanHandler {
 	 * 
 	 * @param pack
 	 * @return
+	 * @throws
 	 */
-	public static Set<Class<?>> getClassSet(String pack) {
+	public static Set<Class<?>> getClasses(String pack) {
 
 		// 第一个class类的集合
 		Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
@@ -42,21 +44,38 @@ public class ComponentScanHandler {
 				String protocol = url.getProtocol();
 				// 如果是以文件的形式保存在服务器上
 				if ("file".equals(protocol)) {
-					System.err.println("file类型的扫描");
+					// System.err.println("file类型的扫描");
 					// 获取包的物理路径
 					String filePath = URLDecoder.decode(url.getFile(), "UTF-8");
 					// 以文件的方式扫描整个包下的文件 并添加到集合中
 					findAndAddClassesInPackageByFile(packageName, filePath,
 							recursive, classes);
-				} else if ("jar".equals(protocol)) {
+				} else if (protocol.equals("vfsfile")) {
+					// Set<URL> results = new HashSet<URL>();
+					String cleanURL = url.toString();
+
+					cleanURL = cleanURL.replaceFirst("vfsfile:", "file:");
+
+					cleanURL = cleanURL.replaceFirst("\\.jar/", ".jar!/");
+
+					// results.add(new URL(cleanURL));
+
+					String filePath = URLDecoder.decode(
+							(new URL(cleanURL)).getFile(), "UTF-8");
+
+					findAndAddClassesInPackageByFile(packageName, filePath,
+							recursive, classes);
+
+				} else if ("jar".equals(protocol) || "zip".equals(protocol)) {
 					// 如果是jar包文件
 					// 定义一个JarFile
-					System.err.println("jar类型的扫描");
-					JarFile jar;
+					// System.err.println(protocol+"类型的扫描");
+
 					try {
-						// 获取jar
-						jar = ((JarURLConnection) url.openConnection())
-								.getJarFile();
+
+						@SuppressWarnings("resource")
+						JarFile jar = new JarFile(new File(url.getFile()
+								.replace("!/" + packageDirName, "")));
 						// 从此jar包 得到一个枚举类
 						Enumeration<JarEntry> entries = jar.entries();
 						// 同样的进行循环迭代
@@ -101,9 +120,8 @@ public class ComponentScanHandler {
 								}
 							}
 						}
-					} catch (IOException e) {
-						// log.error("在扫描用户定义视图时从jar包获取文件出错");
-						e.printStackTrace();
+					} catch (Exception e1) {
+						e1.printStackTrace();
 					}
 				}
 			}
@@ -162,6 +180,16 @@ public class ComponentScanHandler {
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+
+	public static void main(String[] args) {
+		Collection<String> classNames = new ArrayList<String>();
+
+		Set<Class<?>> classSet = getClasses("com.my");
+		for (Class<?> clazz : classSet) {
+			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< " + clazz.getName());
+			classNames.add(clazz.getName());
 		}
 	}
 
