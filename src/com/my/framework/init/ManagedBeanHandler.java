@@ -19,7 +19,9 @@ public class ManagedBeanHandler {
 	@Test
 	public void initManagedBeanContext() {
 		System.out.println("ManagedBeanHandler.initManagedBeanMap()");
-		ManagedBeanContext.putClass("java.lang.Object", Object.class);
+		//ManagedBeanContext.currentContext()..putClass("java.lang.Object", Object.class);
+		//ManagedBeanWrapper waper = new ManagedBeanWrapper("java.lang.Object");
+		//ManagedBeanContext.currentContext().put("java.lang.Object", waper);
 		Set<Class<?>> classSet = ComponentScanHandler.getClasses("com.my");
 		
 		List<Class<?>> controllerClassList = new LinkedList<>();
@@ -33,22 +35,28 @@ public class ManagedBeanHandler {
 			Controller[] controllers = clazz.getAnnotationsByType(Controller.class);
 			if (null != controllers && controllers.length != 0) {
 				controllerClassList.add(clazz);
+				ManagedBeanWrapper waper = new ManagedBeanWrapper(clazz.getName());
+				ManagedBeanContext.currentContext().put(clazz.getName(), waper);
 			}
 			
 			Service[] services = clazz.getAnnotationsByType(Service.class);
 			if (null != services && services.length != 0) {
+				ManagedBeanWrapper waper = new ManagedBeanWrapper(clazz.getName());
+				ManagedBeanContext.currentContext().put(clazz.getName(), waper);
 				serviceClassList.add(clazz);
 			}
 		}
 		
 		System.out.println("\n======================== controller =======================");
 		for (Class<?> clazz : controllerClassList) {
-			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< " + clazz.getName());
+			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< " + ManagedBeanContext
+					.currentContext().get(clazz.getName()));
 		}
 		
 		System.out.println("\n========================== service ========================");
 		for (Class<?> clazz : serviceClassList) {
-			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< " + clazz.getName());
+			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< " + ManagedBeanContext
+					.currentContext().get(clazz.getName()));
 		}
 	}
 

@@ -21,6 +21,7 @@ public class ManagedBeanWrapper {
 	
 	public ManagedBeanWrapper(String className, boolean isSingleton) {
 		try {
+			this.className = className;
 			clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
 			singletonBean = clazz.newInstance();
 		} catch (InstantiationException e) {
@@ -58,5 +59,9 @@ public class ManagedBeanWrapper {
 			e.printStackTrace();
 			throw new RuntimeException("", e);
 		}
+	}
+	
+	public String toString() {
+		return "className:" + className + " waper:" + super.toString();
 	}
 }
