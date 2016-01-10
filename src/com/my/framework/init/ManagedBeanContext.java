@@ -9,7 +9,7 @@ public class ManagedBeanContext {
 	
 	public void put(String beanName, ManagedBeanWrapper waper) {
 		if (managedBeanMap.containsKey(beanName)) {
-			throw new RuntimeException("managedBeanContext init error: " + beanName + " has exist, ");
+			throw new RuntimeException("managedBeanContext init error: " + beanName + " has exist!");
 		}
 		managedBeanMap.put(beanName, waper);
 	}
