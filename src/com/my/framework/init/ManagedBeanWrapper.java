@@ -61,6 +61,10 @@ public class ManagedBeanWrapper {
 		}
 	}
 	
+	public Class<?> clazz() {
+		return clazz;
+	}
+	
 	public String toString() {
 		return "className:" + className + " waper:" + super.toString();
 	}
