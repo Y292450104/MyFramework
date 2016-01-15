@@ -12,7 +12,7 @@ public class ManagedBeanContextUtils {
 		System.out.println("InitFactory.init()");
 	}
 	
-	public synchronized static ManagedBeanHandler getObject() {
+	public synchronized static ManagedBeanHandler managedBeanHandler() {
 		return managedBeanHandler;
 	}
 }

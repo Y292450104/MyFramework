@@ -19,7 +19,7 @@ public class FrameworkWebContext {
 	}
 
 	public static ServletRequest getReqeust() {
-		System.out.println("requestMap:" + requestMap);
+		//System.out.println("requestMap:" + requestMap);
 		return requestMap.get(Thread.currentThread().getId());
 	}
 	
@@ -32,7 +32,7 @@ public class FrameworkWebContext {
 	}
 
 	public static ServletResponse getResponse() {
-		System.out.println("responseMap:" + responseMap);
+		//System.out.println("responseMap:" + responseMap);
 		return responseMap.get(Thread.currentThread().getId());
 	}
 }

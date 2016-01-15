@@ -1,4 +1,4 @@
-package com.my.framework.annotation;
+package com.my.framework.mvc.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -6,9 +6,11 @@ import java.lang.reflect.Method;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.my.framework.core.InvokerExecuter;
 import com.my.framework.init.ManagedBeanContext;
+import com.my.framework.init.ManagedBeanWrapper;
 import com.my.framework.mvc.servlet.ControllerWapper;
 import com.my.framework.mvc.servlet.FrameworkWebContext;
 import com.my.framework.mvc.servlet.FrameworkWebContextUtils;
@@ -24,15 +26,30 @@ public class DispatcherHandler {
 	}
 	
 	protected void doService(ServletRequest request, ServletResponse response) throws IOException {
-		System.out.println("DispatcherServlet service");
 		HttpServletRequest httpServletRequest = (HttpServletRequest)FrameworkWebContext.getReqeust();
+		HttpServletResponse HttpServletResponse = (HttpServletResponse)FrameworkWebContext.getResponse();
+		System.out.println("DispatcherServlet service request url : " + httpServletRequest.getRequestURL());
 		
-		try {
-			Thread.sleep(5000L);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		ControllerWapper controllerWapper = requestControllerMapper.mapper(httpServletRequest.getPathInfo());
+		if (null != controllerWapper) {
+			ManagedBeanWrapper beanWrapper = ManagedBeanContext.currentContext()
+				.get(controllerWapper.getControllerName());
+			if (null != beanWrapper) {
+				Object controller = beanWrapper.getBean();
+				InvokerExecuter exectuer = new InvokerExecuter();
+				Method method = exectuer.method(controller.getClass(), controllerWapper.getMethodName(), 
+						controllerWapper.getMethodParameterTypes());
+				exectuer.invoke(method, controller);
+				return ;
+			}
+			
 		}
+	
+		HttpServletResponse.sendError(404);	
+	}
+	
+	void printServletRequestInfo() {
+		HttpServletRequest httpServletRequest = (HttpServletRequest)FrameworkWebContext.getReqeust();
 		System.out.println(httpServletRequest.getParameterMap());
 		System.out.println(httpServletRequest.getDispatcherType());
 		System.out.println(httpServletRequest.getServletContext());
@@ -59,33 +76,9 @@ public class DispatcherHandler {
 		System.out.println(httpServletRequest.getParameterMap());
 		// System.out.println(httpServletRequest.getParts());
 		// System.out.close();
-		System.out.println(httpServletRequest.getReader());
 		System.out.println(httpServletRequest.getRequestURL());
 		System.out.println(httpServletRequest.getUserPrincipal());
-		
-		ControllerWapper controllerWapper = requestControllerMapper.mapper(httpServletRequest.getPathInfo());
-		Object controller = ManagedBeanContext.currentContext()
-				.get(controllerWapper.getControllerName())
-				.getBean();
-		InvokerExecuter exectuer = new InvokerExecuter();
-		Method method = exectuer.method(controller.getClass(), controllerWapper.getMethodName(), controllerWapper.getMethodParameterTypes());
-		
-		exectuer.invoke(method, controller, 1);
-		
-		/*
-		if ("/user.add".equals(httpServletRequest.getPathInfo())) {
-			try {
-				@SuppressWarnings("unchecked")
-				Class<com.my.test.controller.UserController> clazz = (Class<UserController>) Thread.currentThread().getContextClassLoader().loadClass("com.my.test.controller.UserController");
-				clazz.newInstance().add();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}*/
-		
 	}
-	
 	
 	protected boolean checkMethod(String methodType, String url) {
 		return true;

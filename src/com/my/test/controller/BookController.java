@@ -1,6 +1,6 @@
 package com.my.test.controller;
 
-import com.my.framework.annotation.Controller;
+import com.my.framework.mvc.annotation.Controller;
 import com.my.framework.mvc.annotation.MappingPath;
 
 @Controller

@@ -33,7 +33,7 @@ public class ControllerWapper {
 
 	public String toString() {
 		return "{controllerName:" + controllerName + ",methodName:" + methodName 
-				+ ",ControllerWapper:" + super.toString() + "}";
+				+ ",ControllerWapper:" + super.toString() + "}\n";
 	}
 
 	public Class<?>[] getMethodParameterTypes() {
