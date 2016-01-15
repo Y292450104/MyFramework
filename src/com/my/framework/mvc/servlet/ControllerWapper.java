@@ -3,14 +3,16 @@ package com.my.framework.mvc.servlet;
 public class ControllerWapper {
 	private String controllerName;
 	private String methodName;
+	private Class<?>[] methodParameterTypes;
 
 	public ControllerWapper(String controllerName) {
 		this(controllerName, null);
 	}
 
-	public ControllerWapper(String controllerName, String methodName) {
+	public ControllerWapper(String controllerName, String methodName, Class<?>... methodParameterTypes ) {
 		this.controllerName = controllerName;
 		this.methodName = methodName;
+		this.methodParameterTypes = methodParameterTypes;
 	}
 
 	public String getControllerName() {
@@ -32,6 +34,14 @@ public class ControllerWapper {
 	public String toString() {
 		return "{controllerName:" + controllerName + ",methodName:" + methodName 
 				+ ",ControllerWapper:" + super.toString() + "}";
+	}
+
+	public Class<?>[] getMethodParameterTypes() {
+		return methodParameterTypes;
+	}
+
+	public void setMethodParameterTypes(Class<?>[] methodParameterTypes) {
+		this.methodParameterTypes = methodParameterTypes;
 	}
 
 }

@@ -1,19 +1,19 @@
 package com.my.test.controller;
 
 import com.my.framework.annotation.Controller;
-import com.my.framework.mvc.annotation.MappingUrl;
+import com.my.framework.mvc.annotation.MappingPath;
 
 @Controller
-@MappingUrl("user/")
+@MappingPath("/user/")
 public class UserController {
 
-	@MappingUrl
+	@MappingPath
 	public void add() {
 		System.out.println("BookController add");
 	}
 	
-	@MappingUrl
-	public void del() {
-		System.out.println("BookController del");
+	@MappingPath("addById")
+	public void add(int id) {
+		System.out.println("BookController addid:" + id);
 	}
 }

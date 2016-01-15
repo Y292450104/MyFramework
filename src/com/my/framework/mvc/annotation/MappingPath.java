@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD,ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface MappingUrl {
-	public static final String methodNameAsDefaultUrl = "methodNameAsDefaultUrl";
-	public String value() default methodNameAsDefaultUrl;
+public @interface MappingPath {
+	public static final String methodNameAsDefaultPath = "methodNameAsDefaultPath";
+	public String value() default methodNameAsDefaultPath;
 }

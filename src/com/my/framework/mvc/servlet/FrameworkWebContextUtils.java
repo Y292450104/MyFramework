@@ -3,6 +3,8 @@ package com.my.framework.mvc.servlet;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import com.my.framework.mvc.handler.DispatcherHandler;
+
 public class FrameworkWebContextUtils {
 	private static DispatcherHandler dispatcherHandler = new DispatcherHandler();
 	

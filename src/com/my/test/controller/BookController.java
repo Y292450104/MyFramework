@@ -1,18 +1,18 @@
 package com.my.test.controller;
 
 import com.my.framework.annotation.Controller;
-import com.my.framework.mvc.annotation.MappingUrl;
+import com.my.framework.mvc.annotation.MappingPath;
 
 @Controller
-@MappingUrl("book/")
+@MappingPath("book/")
 public class BookController {
 	
-	@MappingUrl
+	@MappingPath
 	public void add() {
 		System.out.println("BookController add");
 	}
 	
-	@MappingUrl
+	@MappingPath
 	public void del() {
 		System.out.println("BookController del");
 	}
