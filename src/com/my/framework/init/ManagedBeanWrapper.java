@@ -49,6 +49,9 @@ public class ManagedBeanWrapper {
 	
 	public Object getBean() {
 		try {
+			if (null != singletonBean) {
+				return singletonBean;
+			}
 			return clazz.newInstance();
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
