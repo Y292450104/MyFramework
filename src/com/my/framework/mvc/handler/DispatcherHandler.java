@@ -3,6 +3,7 @@ package com.my.framework.mvc.handler;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -37,8 +38,7 @@ public class DispatcherHandler {
 			if (null != beanWrapper) {
 				Object controller = beanWrapper.getBean();
 				InvokerExecuter exectuer = new InvokerExecuter();
-				Method method = exectuer.method(controller.getClass(), controllerWapper.getMethodName(), 
-						controllerWapper.getMethodParameterTypes());
+				Method method = controllerWapper.getMethod();
 				exectuer.invoke(method, controller);
 				return ;
 			}
@@ -51,11 +51,10 @@ public class DispatcherHandler {
 	void printServletRequestInfo() {
 		
 		HttpServletRequest httpServletRequest = (HttpServletRequest)FrameworkWebContext.getReqeust();
-		
 		System.out.println(httpServletRequest.getParameterMap());
-		//System.out.println(httpServletRequest.getDispatcherType());
-		//System.out.println(httpServletRequest.getServletContext());
-		//System.out.println(httpServletRequest.getServletContext().getVirtualServerName());
+		System.out.println(httpServletRequest.getDispatcherType());
+		System.out.println(httpServletRequest.getServletContext());
+		System.out.println(httpServletRequest.getServletContext().getContextPath());
 		System.out.println(httpServletRequest.getPathInfo());
 		System.out.println(httpServletRequest.getContextPath());
 		System.out.println(httpServletRequest.getRequestURI());
@@ -80,6 +79,18 @@ public class DispatcherHandler {
 		// System.out.close();
 		System.out.println(httpServletRequest.getRequestURL());
 		System.out.println(httpServletRequest.getUserPrincipal());
+		
+		
+		try {
+			httpServletRequest.getParts();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} // ÎÄ¼þ´«Êä
+		
 	}
 	
 	protected boolean checkMethod(String methodType, String url) {

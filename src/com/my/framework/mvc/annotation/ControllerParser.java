@@ -37,8 +37,7 @@ public class ControllerParser implements IAnnotationClassLoadParser{
 						mapperUrl = controllerUrl + methodUrlAnno.value();
 					}
 					
-					ControllerWapper controllerWapper = new ControllerWapper(clazz.getName(), 
-							method.getName(), method.getParameterTypes());
+					ControllerWapper controllerWapper = new ControllerWapper(clazz.getName(), method);
 					DispatcherContext.dispatcherContext().put(mapperUrl, controllerWapper);
 				}
 			}

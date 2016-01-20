@@ -56,7 +56,8 @@ public class ManagedBeanHandler {
 				.get(controllerWapper.getControllerName());
 
 		try {
-			managedBeanWrapper.clazz().getMethod(controllerWapper.getMethodName()).invoke(managedBeanWrapper.getBean());
+			Object controller = managedBeanWrapper.getBean();
+			controller.getClass().getMethod(controllerWapper.getMethodName()).invoke(managedBeanWrapper.getBean());
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

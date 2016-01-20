@@ -1,47 +1,35 @@
 package com.my.framework.mvc.servlet;
 
+import java.lang.reflect.Method;
+
 public class ControllerWapper {
 	private String controllerName;
-	private String methodName;
-	private Class<?>[] methodParameterTypes;
+	private Method method;
 
 	public ControllerWapper(String controllerName) {
 		this(controllerName, null);
 	}
 
-	public ControllerWapper(String controllerName, String methodName, Class<?>... methodParameterTypes ) {
+	public ControllerWapper(String controllerName, Method method) {
 		this.controllerName = controllerName;
-		this.methodName = methodName;
-		this.methodParameterTypes = methodParameterTypes;
+		this.method = method;
 	}
 
 	public String getControllerName() {
 		return controllerName;
 	}
 
-	public void setControllerName(String controllerName) {
-		this.controllerName = controllerName;
-	}
-
 	public String getMethodName() {
-		return methodName;
+		return method.getName();
 	}
-
-	public void setMethodName(String methodName) {
-		this.methodName = methodName;
+	
+	public Method getMethod() {
+		return method;
 	}
 
 	public String toString() {
-		return "{controllerName:" + controllerName + ",methodName:" + methodName 
+		return "{controllerName:" + controllerName + ",methodName:" + method.getName() 
 				+ ",ControllerWapper:" + super.toString() + "}\n";
-	}
-
-	public Class<?>[] getMethodParameterTypes() {
-		return methodParameterTypes;
-	}
-
-	public void setMethodParameterTypes(Class<?>[] methodParameterTypes) {
-		this.methodParameterTypes = methodParameterTypes;
 	}
 
 }

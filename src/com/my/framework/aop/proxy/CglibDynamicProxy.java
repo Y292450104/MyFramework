@@ -1,6 +1,7 @@
 package com.my.framework.aop.proxy;
 
 import java.lang.reflect.Method;
+import java.util.Date;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
@@ -38,10 +39,18 @@ public class CglibDynamicProxy implements MethodInterceptor, DynamicProxy {
     @Override  
     // 回调方法  
     public Object intercept(Object obj, Method method, Object[] args,  
-            MethodProxy proxy) throws Throwable {  
-        System.out.println("事物开始  >>>>>>>>>>>>>>> by CglibDynamixProxy");  
+            MethodProxy proxy) throws Throwable { 
+    	
+    	
+        System.out.println(new Date() + " >>>>>>>>>>> Before invoke by CglibDynamixProxy");
+        
+        
+        System.out.println(new Date() + " >>>>>>>>>>> class:" + obj.getClass());
+        System.out.println(new Date() + " >>>>>>>>>>> superClass:" + obj.getClass().getSuperclass());
+        System.out.println(new Date() + " >>>>>>>>>>> method:" + method.getName());
+        System.out.println(new Date() + " >>>>>>>>>>> methodDeclaringClass:" + method.getDeclaringClass());
         Object result = proxy.invokeSuper(obj, args);  
-        System.out.println("事物结束 >>>>>>>>>>>>>>> by CglibDynamixProxy\n");
+        System.out.println(new Date() + " >>>>>>>>>>> After invoke by CglibDynamixProxy\n");
         return result;  
   
     }  

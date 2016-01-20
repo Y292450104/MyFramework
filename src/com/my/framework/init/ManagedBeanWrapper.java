@@ -25,7 +25,9 @@ public class ManagedBeanWrapper {
 		try {
 			this.clazz = clazz;
 			this.className = clazz.getName();
-			singletonBean = newProxyInstance();
+			if (isSingleton) {
+				singletonBean = newProxyInstance();
+			}
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
