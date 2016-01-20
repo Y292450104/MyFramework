@@ -1,4 +1,4 @@
-package com.my.framework.mvc.servlet;
+package com.my.framework.mvc.handler;
 
 import com.my.framework.mvc.annotation.RequestParamParser;
 

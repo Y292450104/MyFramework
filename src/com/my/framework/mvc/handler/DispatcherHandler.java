@@ -49,11 +49,13 @@ public class DispatcherHandler {
 	}
 	
 	void printServletRequestInfo() {
+		
 		HttpServletRequest httpServletRequest = (HttpServletRequest)FrameworkWebContext.getReqeust();
+		
 		System.out.println(httpServletRequest.getParameterMap());
-		System.out.println(httpServletRequest.getDispatcherType());
-		System.out.println(httpServletRequest.getServletContext());
-		System.out.println(httpServletRequest.getServletContext().getVirtualServerName());
+		//System.out.println(httpServletRequest.getDispatcherType());
+		//System.out.println(httpServletRequest.getServletContext());
+		//System.out.println(httpServletRequest.getServletContext().getVirtualServerName());
 		System.out.println(httpServletRequest.getPathInfo());
 		System.out.println(httpServletRequest.getContextPath());
 		System.out.println(httpServletRequest.getRequestURI());

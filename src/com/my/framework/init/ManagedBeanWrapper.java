@@ -1,5 +1,7 @@
 package com.my.framework.init;
 
+import com.my.framework.aop.proxy.DynamicProxyFactory;
+
 /**
  * 
  * @author Administrator
@@ -15,22 +17,19 @@ public class ManagedBeanWrapper {
 	@SuppressWarnings("unused")
 	private String type;
 	
-	public ManagedBeanWrapper(String className) {
-		this(className, false);
+	public ManagedBeanWrapper(Class<?> clazz) {
+		this(clazz, false);
 	}
 	
-	public ManagedBeanWrapper(String className, boolean isSingleton) {
+	public ManagedBeanWrapper(Class<?> clazz, boolean isSingleton) {
 		try {
-			this.className = className;
-			clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
-			singletonBean = clazz.newInstance();
+			this.clazz = clazz;
+			this.className = clazz.getName();
+			singletonBean = newProxyInstance();
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -52,7 +51,7 @@ public class ManagedBeanWrapper {
 			if (null != singletonBean) {
 				return singletonBean;
 			}
-			return clazz.newInstance();
+			return newProxyInstance();
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -62,6 +61,10 @@ public class ManagedBeanWrapper {
 			e.printStackTrace();
 			throw new RuntimeException("", e);
 		}
+	}
+	
+	private Object newProxyInstance() throws InstantiationException, IllegalAccessException {
+		return DynamicProxyFactory.getDynamixProxy(clazz).newProxyInstance(clazz);
 	}
 	
 	public Class<?> clazz() {

@@ -11,7 +11,7 @@ public class ServiceParser implements IAnnotationClassLoadParser {
 		// TODO Auto-generated method stub
 		Service[] services = clazz.getAnnotationsByType(Service.class);
 		if (null != services && services.length != 0) {
-			ManagedBeanWrapper waper = new ManagedBeanWrapper(clazz.getName());
+			ManagedBeanWrapper waper = new ManagedBeanWrapper(clazz);
 			ManagedBeanContext.currentContext().put(clazz.getName(), waper);
 		}
 	}

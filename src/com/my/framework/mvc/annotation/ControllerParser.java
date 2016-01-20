@@ -18,7 +18,7 @@ public class ControllerParser implements IAnnotationClassLoadParser{
 		Controller[] controllers = clazz.getAnnotationsByType(Controller.class);
 		MappingPath[] controllerUrlAnnos = clazz.getAnnotationsByType(MappingPath.class);
 		if (null != controllers && controllers.length != 0) {
-			ManagedBeanWrapper waper = new ManagedBeanWrapper(clazz.getName());
+			ManagedBeanWrapper waper = new ManagedBeanWrapper(clazz);
 			ManagedBeanContext.currentContext().put(clazz.getName(), waper);
 			
 			String controllerUrl = "";
