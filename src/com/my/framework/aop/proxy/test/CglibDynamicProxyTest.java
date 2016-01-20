@@ -18,7 +18,7 @@ public class CglibDynamicProxyTest {
 
 		field.setAccessible(true);
 		Object value = new JdkDynamicProxy()
-				.newProxyInstance(BookFacadeImpl.class);
+				.proxyInstance(BookFacadeImpl.class);
 		field.set(testProxy, value);
 		testProxy.bookProxy.addBook();
 	}

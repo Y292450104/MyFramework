@@ -20,7 +20,7 @@ public class JdkDynamicProxyTest {
 		Field field = testProxy.getClass().getDeclaredField("bookProxy");
 		
 		field.setAccessible(true);
-		Object value = new JdkDynamicProxy().newProxyInstance(BookFacadeImpl.class);
+		Object value = new JdkDynamicProxy().proxyInstance(BookFacadeImpl.class);
 		field.set(testProxy, value);
 		testProxy.bookProxy.addBook();
 		

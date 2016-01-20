@@ -2,6 +2,7 @@ package com.my.framework.core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Date;
 
 public class InvokerExecuter {
 
@@ -21,7 +22,10 @@ public class InvokerExecuter {
 	public Object invoke(Method method, Object instance, Object... args) {
 		// Method method = clazz.getMethod(methodName);
 		try {
+			System.out.println(new Date() + " >>>>>>>>>>> before invoke InvokerExecuter!");
 			method.invoke(instance, args);
+			System.out.println(new Date() + " >>>>>>>>>>> After invoke InvokerExecuter!");
+			
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

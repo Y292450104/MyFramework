@@ -66,7 +66,7 @@ public class ManagedBeanWrapper {
 	}
 	
 	private Object newProxyInstance() throws InstantiationException, IllegalAccessException {
-		return DynamicProxyFactory.getDynamixProxy(clazz).newProxyInstance(clazz);
+		return DynamicProxyFactory.newDynamixProxy(clazz).proxyInstance(clazz);
 	}
 	
 	public Class<?> clazz() {

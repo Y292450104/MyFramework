@@ -15,10 +15,10 @@ public class DynamicProxyTest {
 		
 		for (Field field : fields) {
 			field.setAccessible(true);
-			DynamicProxy proxy = DynamicProxyFactory.getDynamixProxy(field.getType());
+			DynamicProxy proxy = DynamicProxyFactory.newDynamixProxy(field.getType());
 			System.out.println("proxy class:" + proxy.getClass());
 			
-			field.set(test, proxy.newProxyInstance(BookFacadeImpl.class));
+			field.set(test, proxy.proxyInstance(BookFacadeImpl.class));
 		}
 		
 		test.bookFacade.addBook();
