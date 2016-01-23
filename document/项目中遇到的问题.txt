@@ -88,3 +88,6 @@ http://blog.163.com/ffwangkun@126/blog/static/16860101520133102430521/
 
 创建一个maven工程然后修改为web项目
 http://www.cnblogs.com/luxh/archive/2012/11/14/2763139.html
+
+aop实现方式tiny-spring
+https://github.com/code4craft/tiny-spring

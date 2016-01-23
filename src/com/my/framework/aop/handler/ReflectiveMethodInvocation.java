@@ -1,6 +1,44 @@
 package com.my.framework.aop.handler;
 
-public class ReflectiveMethodInvocation {
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Method;
+import java.util.Date;
+
+import net.sf.cglib.proxy.MethodProxy;
+
+import org.aopalliance.intercept.MethodInvocation;
+
+public class ReflectiveMethodInvocation implements MethodInvocation {
+	private Object target;
+	private Method method;
+    private Object[] arguments;
+   
+	public ReflectiveMethodInvocation(Object target, Method method, Object[] arguments) {
+		this.target = target;
+		this.method = method;
+		this.arguments = arguments;
+	}
+
+	@Override
+	public Method getMethod() {
+		return method;
+	}
+
+	@Override
+	public Object[] getArguments() {
+		return arguments;
+	}
+
+	@Override
+	public Object getThis() {
+		return target;
+	}
+
+	@Override
+	public AccessibleObject getStaticPart() {
+		return method;
+	}
+	
 	public Object proceed() throws Throwable {
 		// currentInterceptorIndex默认等于-1的，它记录着当前执行到了哪个栏截器
 //		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers
@@ -29,6 +67,14 @@ public class ReflectiveMethodInvocation {
 //					.invoke(this);
 //		}
 		
-		return new Object();
+		//return method.invoke(target, arguments);
+		
+		System.out.println(new Date() + " >>>>>>>>>>> class:" + target.getClass());
+		System.out.println(new Date() + " >>>>>>>>>>> superClass:" + target.getClass().getSuperclass());
+		System.out.println(new Date() + " >>>>>>>>>>> method:" + method.getName());
+		System.out.println(new Date() + " >>>>>>>>>>> methodDeclaringClass:" + method.getDeclaringClass());
+		
+		
+		return method.invoke(this.target, this.arguments);
 	}
 }

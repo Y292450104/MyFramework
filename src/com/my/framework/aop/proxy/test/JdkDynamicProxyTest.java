@@ -1,8 +1,13 @@
 package com.my.framework.aop.proxy.test;
 
 import java.lang.reflect.Field;
+import java.util.Random;
 
+import com.my.framework.aop.proxy.AdvisedSupport;
+import com.my.framework.aop.proxy.AopProxy;
+import com.my.framework.aop.proxy.CglibDynamicProxy;
 import com.my.framework.aop.proxy.JdkDynamicProxy;
+import com.my.framework.aop.proxy.TargetSource;
 
 public class JdkDynamicProxyTest {
 	BookFacade bookProxy = null;
@@ -20,8 +25,14 @@ public class JdkDynamicProxyTest {
 		Field field = testProxy.getClass().getDeclaredField("bookProxy");
 		
 		field.setAccessible(true);
-		Object value = new JdkDynamicProxy().proxyInstance(BookFacadeImpl.class);
-		field.set(testProxy, value);
+		AdvisedSupport advisedSupport = new AdvisedSupport();
+		BookFacadeImpl target = new BookFacadeImpl();
+		target.id(new Random().nextInt());
+		target.addBook();
+		TargetSource targetSource = new TargetSource(target, null);
+		advisedSupport.setTargetSource(targetSource);
+		AopProxy proxy = new JdkDynamicProxy(advisedSupport);
+		field.set(testProxy, proxy.getProxy());
 		testProxy.bookProxy.addBook();
 		
     }  

@@ -1,6 +1,7 @@
 package com.my.framework.init;
 
-import com.my.framework.aop.proxy.DynamicProxyFactory;
+import com.my.framework.aop.proxy.AdvisedSupport;
+import com.my.framework.aop.proxy.AopProxyFactory;
 
 /**
  * 
@@ -16,24 +17,35 @@ public class ManagedBeanWrapper {
 	private static Object singletonBean;
 	@SuppressWarnings("unused")
 	private String type;
+	private AdvisedSupport advisedSupport;
 	
 	public ManagedBeanWrapper(Class<?> clazz) {
 		this(clazz, false);
 	}
 	
 	public ManagedBeanWrapper(Class<?> clazz, boolean isSingleton) {
+		this.clazz = clazz;
+		this.className = clazz.getName();
+		if (isSingleton) {
+			singletonBean = newInstance();
+		}
+	}
+	
+	private Object newInstance() {
 		try {
-			this.clazz = clazz;
-			this.className = clazz.getName();
-			if (isSingleton) {
-				singletonBean = newProxyInstance();
+			Object object = clazz.newInstance();
+			if (null != advisedSupport) {
+				object = proxy(object);
 			}
+			return object;
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new RuntimeException();
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new RuntimeException();
 		}
 	}
 
@@ -49,24 +61,16 @@ public class ManagedBeanWrapper {
 	}
 	
 	public Object getBean() {
-		try {
+			Object target = null;
 			if (null != singletonBean) {
-				return singletonBean;
+				target = singletonBean;
 			}
-			return newProxyInstance();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new RuntimeException("", e);
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new RuntimeException("", e);
-		}
+			target = newInstance();
+			return proxy(target);
 	}
 	
-	private Object newProxyInstance() throws InstantiationException, IllegalAccessException {
-		return DynamicProxyFactory.newDynamixProxy(clazz).proxyInstance(clazz);
+	private Object proxy(Object target) {
+		return AopProxyFactory.newDynamicProxy(target.getClass(),advisedSupport).getProxy();
 	}
 	
 	public Class<?> clazz() {
@@ -75,5 +79,9 @@ public class ManagedBeanWrapper {
 	
 	public String toString() {
 		return "className:" + className + " waper:" + super.toString();
+	}
+
+	public void setAdvisedSupport(AdvisedSupport advisedSupport) {
+		this.advisedSupport = advisedSupport;
 	}
 }

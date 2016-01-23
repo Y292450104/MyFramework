@@ -1,6 +1,7 @@
 package com.my.framework.aop.proxy.test;
 
 import java.lang.reflect.Field;
+import java.util.Random;
 
 import com.my.framework.aop.proxy.*;
 
@@ -16,10 +17,14 @@ public class CglibDynamicProxyTest {
 		CglibDynamicProxyTest testProxy = new CglibDynamicProxyTest();
 		Field field = testProxy.getClass().getDeclaredField("bookProxy");
 
-		field.setAccessible(true);
-		Object value = new JdkDynamicProxy()
-				.proxyInstance(BookFacadeImpl.class);
-		field.set(testProxy, value);
+		AdvisedSupport advisedSupport = new AdvisedSupport();
+		BookFacadeImpl target = new BookFacadeImpl();
+		target.id(new Random().nextInt());
+		target.addBook();
+		TargetSource targetSource = new TargetSource(target, null);
+		advisedSupport.setTargetSource(targetSource);
+		AopProxy proxy = new CglibDynamicProxy(advisedSupport);
+		field.set(testProxy, proxy.getProxy());
 		testProxy.bookProxy.addBook();
 	}
 }
