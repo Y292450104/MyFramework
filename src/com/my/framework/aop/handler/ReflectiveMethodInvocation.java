@@ -2,9 +2,9 @@ package com.my.framework.aop.handler;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Date;
-
-import net.sf.cglib.proxy.MethodProxy;
+import java.util.List;
 
 import org.aopalliance.intercept.MethodInvocation;
 
@@ -12,6 +12,8 @@ public class ReflectiveMethodInvocation implements MethodInvocation {
 	private Object target;
 	private Method method;
     private Object[] arguments;
+    private List<?> interceptorsAndDynamicMethodMatchers = new ArrayList<>();
+    private int currentInterceptorIndex = -1;
    
 	public ReflectiveMethodInvocation(Object target, Method method, Object[] arguments) {
 		this.target = target;
@@ -75,6 +77,22 @@ public class ReflectiveMethodInvocation implements MethodInvocation {
 		System.out.println(new Date() + " >>>>>>>>>>> methodDeclaringClass:" + method.getDeclaringClass());
 		
 		
+		if (this.currentInterceptorIndex == interceptorsAndDynamicMethodMatchers.size() - 1) {
+			return this.invoke();
+		}
+		
+		Object matcher = interceptorsAndDynamicMethodMatchers.get(++currentInterceptorIndex);
+		if (matcher.equals("")) {
+			// À¹½ØÆ÷µ÷ÓÃ;
+		} else {
+			return proceed();
+		}
+		
+		
+		return method.invoke(this.target, this.arguments);
+	}
+	
+	private Object invoke() throws Throwable{
 		return method.invoke(this.target, this.arguments);
 	}
 }
