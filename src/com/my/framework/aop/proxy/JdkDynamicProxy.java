@@ -39,6 +39,7 @@ public class JdkDynamicProxy extends AbstractAopProxy implements AopProxy {
 	/** 
 	 * 调用方法 
 	 */
+	@Deprecated
 	protected Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
 		// 增加aop切入点时间
@@ -69,16 +70,20 @@ public class JdkDynamicProxy extends AbstractAopProxy implements AopProxy {
 
 
 		@Override
-		public Object invoke(Object target, Method method, Object[] param)
+		public Object invoke(Object target, Method method, Object[] args)
 				throws Throwable {
 			// TODO Auto-generated method stub
 			System.out.println(new Date() + " >>>>>>>>>>> Before invoke by JdkDynamixProxy");
+			
+			TargetSource targetSource = advised.getTargetSource();
+			ReflectiveMethodInvocation reflectiveMethodInvocation = new ReflectiveMethodInvocation(targetSource.getTarget(),
+					method, args, targetSource.getTargetClass(), advised.getInterceptorsAndMethodMatchers());
+			
 			if (advised.getMethodMatcher() != null
-					&& advised.getMethodMatcher().matches(method, advised.getTargetSource().getTargetClass())) {
-				return delegateMethodInterceptor.invoke(new ReflectiveMethodInvocation(advised.getTargetSource().getTarget(), method, param));
+					&& advised.getMethodMatcher().matches(method, targetSource.getTargetClass())) {
+				return delegateMethodInterceptor.invoke(reflectiveMethodInvocation);
 			}
-			return new ReflectiveMethodInvocation(advised.getTargetSource().getTarget(), method, param).proceed();
-		
+			return reflectiveMethodInvocation.proceed();
 		}
 
 	}

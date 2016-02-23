@@ -1,7 +1,9 @@
 package com.my.framework.init;
 
+import com.my.framework.annotation.IAnnotationClassInstantiateParser;
 import com.my.framework.aop.proxy.AdvisedSupport;
 import com.my.framework.aop.proxy.AopProxyFactory;
+import com.my.framework.aop.proxy.TargetSource;
 
 /**
  * 
@@ -33,11 +35,13 @@ public class ManagedBeanWrapper {
 	
 	private Object newInstance() {
 		try {
-			Object object = clazz.newInstance();
+			Object target = clazz.newInstance();
+			initTarget(target);
 			if (null != advisedSupport) {
-				object = proxy(object);
+				advisedSupport.setTargetSource(new TargetSource(target));
+				target = proxy(target);
 			}
-			return object;
+			return target;
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -46,6 +50,12 @@ public class ManagedBeanWrapper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new RuntimeException();
+		}
+	}
+	
+	private void initTarget(Object target) {
+		for (IAnnotationClassInstantiateParser parser : ManagedBeanContext.currentContext().classInstantiateParserList()) {
+			parser.parse(target);
 		}
 	}
 
@@ -60,13 +70,13 @@ public class ManagedBeanWrapper {
 		return singletonBean;
 	}
 	
-	public Object getBean() {
-			Object target = null;
-			if (null != singletonBean) {
-				target = singletonBean;
-			}
-			target = newInstance();
-			return proxy(target);
+	public synchronized Object getBean() {
+		Object target = null;
+		if (null != singletonBean) {
+			target = singletonBean;
+		}
+		target = newInstance();
+		return target;
 	}
 	
 	private Object proxy(Object target) {
@@ -83,5 +93,9 @@ public class ManagedBeanWrapper {
 
 	public void setAdvisedSupport(AdvisedSupport advisedSupport) {
 		this.advisedSupport = advisedSupport;
+	}
+	
+	public AdvisedSupport getAdvisedSupport() {
+		return advisedSupport;
 	}
 }

@@ -22,11 +22,6 @@ public class ManagedBeanHandler {
 	@Test
 	public void initManagedBeanContext() {
 		System.out.println("ManagedBeanHandler.initManagedBeanMap()");
-		// ManagedBeanContext.currentContext()..putClass("java.lang.Object",
-		// Object.class);
-		// ManagedBeanWrapper waper = new
-		// ManagedBeanWrapper("java.lang.Object");
-		// ManagedBeanContext.currentContext().put("java.lang.Object", waper);
 		Set<Class<?>> classSet = ComponentScanHandler.getClasses("com.my");
 		
 		List<IAnnotationClassLoadParser> classLoadParserList = ManagedBeanContext.currentContext().classLoadParserList();
