@@ -76,6 +76,7 @@ public class ManagedBeanWrapper {
 			target = singletonBean;
 		}
 		target = newInstance();
+		System.out.println(target.getClass());
 		return target;
 	}
 	

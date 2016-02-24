@@ -102,11 +102,11 @@ public class ReflectiveMethodInvocation implements MethodInvocation, Cloneable {
 	
 	private Object invoke() throws Throwable{
 		System.out.println(new Date() + " >>>>>>>>>>> class:" + target.getClass());
-		System.out.println(new Date() + " >>>>>>>>>>> superClass:" + target.getClass().getSuperclass());
+//		System.out.println(new Date() + " >>>>>>>>>>> superClass:" + target.getClass().getSuperclass());
 		System.out.println(new Date() + " >>>>>>>>>>> method:" + method.getName());
-		System.out.println(new Date() + " >>>>>>>>>>> methodDeclaringClass:" + method.getDeclaringClass());
+//		System.out.println(new Date() + " >>>>>>>>>>> methodDeclaringClass:" + method.getDeclaringClass());
 		Object result = method.invoke(this.target, this.arguments);
-		System.out.println(new Date() + " >>>>>>>>>>> end:" + target.getClass());
+//		System.out.println(new Date() + " >>>>>>>>>>> end:" + target.getClass());
 		return result;
 	}
 }

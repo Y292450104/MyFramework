@@ -27,6 +27,7 @@
 		</plugins>
 	</build>
 
+
 	<dependencies>
 		<dependency>
 			<groupId>aopalliance</groupId>

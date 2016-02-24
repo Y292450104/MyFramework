@@ -7,8 +7,11 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.my.framework.annotation.AspectParser;
 import com.my.framework.annotation.IAnnotationClassLoadParser;
 import com.my.framework.annotation.ServiceParser;
+import com.my.framework.aop.proxy.AdvisedSupport;
+import com.my.framework.aop.proxy.InterceptorAndMethodMatcher;
 import com.my.framework.mvc.annotation.ControllerParser;
 import com.my.framework.mvc.servlet.ControllerWapper;
 import com.my.framework.mvc.servlet.DispatcherContext;
@@ -23,10 +26,7 @@ public class ManagedBeanHandler {
 	public void initManagedBeanContext() {
 		System.out.println("ManagedBeanHandler.initManagedBeanMap()");
 		Set<Class<?>> classSet = ComponentScanHandler.getClasses("com.my");
-		
-		List<IAnnotationClassLoadParser> classLoadParserList = ManagedBeanContext.currentContext().classLoadParserList();
-		classLoadParserList.add(new ControllerParser());
-		classLoadParserList.add(new ServiceParser());
+		initClassLoadParserList();
 		
 		System.out.println("classSet.size():" + classSet.size());
 		for (Class<?> clazz : classSet) {
@@ -46,7 +46,37 @@ public class ManagedBeanHandler {
 		System.out.println("urlControllerMap.size():" + DispatcherContext.dispatcherContext().urlControllerMap().size());
 		System.out.println(DispatcherContext.dispatcherContext().urlControllerMap().toString());
 
-		ControllerWapper controllerWapper = DispatcherContext.dispatcherContext().urlControllerMap().get("book/add");
+		clearClassLoadParserList();
+		
+		for (Map.Entry<String, ManagedBeanWrapper> entry : ManagedBeanContext.currentContext().beanNameWrapperMap().entrySet()) {
+			ManagedBeanWrapper wrapper = entry.getValue();
+			List<InterceptorAndMethodMatcher> list = ManagedBeanContext.currentContext()
+					.interceptorAndMethodMatcherListByTargetClass(wrapper.clazz());
+			if (!list.isEmpty()) {
+				System.out.println("wrapper:" + wrapper.getClassName() + " matcher.size:" + list.size());
+				AdvisedSupport advisedSupport = new AdvisedSupport();
+				advisedSupport.setInterceptorsAndMethodMatchers(list);
+				wrapper.setAdvisedSupport(advisedSupport);
+			}
+		}
+		
+		testController();
+	}
+
+	private void initClassLoadParserList() {
+		// TODO Auto-generated method stub
+		List<IAnnotationClassLoadParser> classLoadParserList = ManagedBeanContext.currentContext().classLoadParserList();
+		classLoadParserList.add(new ControllerParser());
+		classLoadParserList.add(new ServiceParser());
+		classLoadParserList.add(new AspectParser());
+	}
+	
+	private void clearClassLoadParserList() {
+		ManagedBeanContext.currentContext().classLoadParserList().clear();
+	}
+
+	private void testController() {
+		ControllerWapper controllerWapper = DispatcherContext.dispatcherContext().urlControllerMap().get("/book/add");
 		ManagedBeanWrapper managedBeanWrapper = ManagedBeanContext.currentContext()
 				.get(controllerWapper.getControllerName());
 
@@ -70,7 +100,5 @@ public class ManagedBeanHandler {
 			e.printStackTrace();
 		}
 
-		classLoadParserList.clear();
 	}
-
 }

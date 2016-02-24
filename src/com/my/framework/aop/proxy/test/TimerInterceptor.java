@@ -2,10 +2,9 @@ package com.my.framework.aop.proxy.test;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.aspectj.lang.annotation.Aspect;
 
-/**
- * @author yihua.huang@dianping.com
- */
+@Aspect("execution(* com.my.framework.aop.proxy.test.BookFacadeImpl.addBook(..))")
 public class TimerInterceptor implements MethodInterceptor {
 
 	@Override

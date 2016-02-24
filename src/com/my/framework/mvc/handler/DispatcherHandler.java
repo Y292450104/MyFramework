@@ -9,7 +9,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.my.framework.core.InvokerExecuter;
 import com.my.framework.init.ManagedBeanContext;
 import com.my.framework.init.ManagedBeanWrapper;
 import com.my.framework.mvc.servlet.ControllerWapper;

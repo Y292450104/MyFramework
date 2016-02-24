@@ -4,7 +4,7 @@ import com.my.framework.mvc.annotation.Controller;
 import com.my.framework.mvc.annotation.MappingPath;
 
 @Controller
-@MappingPath("order/")
+@MappingPath("/order/")
 public class OrderController {
 	
 	@MappingPath

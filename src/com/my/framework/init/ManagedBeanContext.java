@@ -8,6 +8,7 @@ import java.util.Map;
 import com.my.framework.annotation.IAnnotationClassInstantiateParser;
 import com.my.framework.annotation.IAnnotationClassLoadParser;
 import com.my.framework.aop.proxy.AdvisedSupport;
+import com.my.framework.aop.proxy.AspectJExpressionPointcut;
 import com.my.framework.aop.proxy.InterceptorAndMethodMatcher;
 
 public class ManagedBeanContext {
@@ -26,7 +27,6 @@ public class ManagedBeanContext {
 
 	public ManagedBeanWrapper get(String beanName) {
 		ManagedBeanWrapper wrapper = beanNameWrapperMap.get(beanName);
-		initWrapper(wrapper);
 		return wrapper;
 	}
 
@@ -50,16 +50,16 @@ public class ManagedBeanContext {
 		return interceptorAndMethodMatcherList;
 	}
 	
-	private List<InterceptorAndMethodMatcher> interceptorAndMethodMatcherListByTargetClass(Class<?> targetClass) {
-		return interceptorAndMethodMatcherList;
-	}
-	
-	private void initWrapper(ManagedBeanWrapper wrapper) {
-		List<InterceptorAndMethodMatcher> list = interceptorAndMethodMatcherListByTargetClass(wrapper.clazz());
-		if (!list.isEmpty()) {
-			AdvisedSupport advisedSupport = new AdvisedSupport();
-			advisedSupport.setInterceptorsAndMethodMatchers(list);
-			wrapper.setAdvisedSupport(advisedSupport);
+	public List<InterceptorAndMethodMatcher> interceptorAndMethodMatcherListByTargetClass(Class<?> targetClass) {
+		List<InterceptorAndMethodMatcher> returnList  = new ArrayList<InterceptorAndMethodMatcher>();
+		for (InterceptorAndMethodMatcher matcher : interceptorAndMethodMatcherList) {
+			if (matcher instanceof AspectJExpressionPointcut 
+					&& ((AspectJExpressionPointcut)matcher).matches(targetClass)) {
+				returnList.add(matcher);
+			}
 		}
+		
+		return returnList;
 	}
+
 }

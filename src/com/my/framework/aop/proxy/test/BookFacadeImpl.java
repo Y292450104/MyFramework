@@ -1,5 +1,8 @@
 package com.my.framework.aop.proxy.test;
 
+import com.my.framework.annotation.Service;
+
+@Service
 public class BookFacadeImpl implements BookFacade {
 	private int id = 0;
 	
