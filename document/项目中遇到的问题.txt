@@ -98,4 +98,11 @@ aop实现方式tiny-spring
 //============================================
 http://my.oschina.net/flashsword/blog/194481
 >>>>>>> de00473799739d1075514a04457802c1b6f5d851
+http://blog.csdn.net/lmj623565791/article/details/46596109
 https://github.com/code4craft/tiny-spring
+
+
+/**************************************************************
+android mvp // 大量使用了回调函数的方式。使用接口的方式进行开发。
+http://blog.csdn.net/lmj623565791/article/details/46596109
+
