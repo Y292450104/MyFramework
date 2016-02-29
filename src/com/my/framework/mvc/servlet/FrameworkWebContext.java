@@ -9,30 +9,42 @@ import javax.servlet.ServletResponse;
 public class FrameworkWebContext {
 	private static Map<Long, ServletRequest> requestMap = new HashMap<Long, ServletRequest>();
 	private static Map<Long, ServletResponse> responseMap = new HashMap<Long, ServletResponse>();
-	
+
 	static void putRequest(Long id, ServletRequest request) {
-		requestMap.put(id, request);
+		synchronized (requestMap) {
+			requestMap.put(id, request);
+		}
 	}
-	
+
 	static void removeRequest(Long id) {
-		requestMap.remove(id);
+		synchronized (requestMap) {
+			requestMap.remove(id);
+		}
 	}
 
 	public static ServletRequest getReqeust() {
-		//System.out.println("requestMap:" + requestMap);
-		return requestMap.get(Thread.currentThread().getId());
+		// System.out.println("requestMap:" + requestMap);
+		synchronized (requestMap) {
+			return requestMap.get(Thread.currentThread().getId());
+		}
 	}
-	
+
 	static void putResponse(Long id, ServletResponse response) {
-		responseMap.put(id, response);
+		synchronized (responseMap) {
+			responseMap.put(id, response);
+		}
 	}
-	
+
 	static void removeResponse(Long id) {
-		responseMap.remove(id);
+		synchronized (responseMap) {
+			responseMap.remove(id);
+		}
 	}
 
 	public static ServletResponse getResponse() {
-		//System.out.println("responseMap:" + responseMap);
-		return responseMap.get(Thread.currentThread().getId());
+		synchronized (responseMap) {
+			// System.out.println("responseMap:" + responseMap);
+			return responseMap.get(Thread.currentThread().getId());
+		}
 	}
 }

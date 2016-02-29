@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.my.framework.init.ManagedBeanContext;
-import com.my.framework.init.ManagedBeanWrapper;
 import com.my.framework.mvc.servlet.ControllerWapper;
 import com.my.framework.mvc.servlet.FrameworkWebContext;
 import com.my.framework.mvc.servlet.FrameworkWebContextUtils;
@@ -32,10 +31,9 @@ public class DispatcherHandler {
 		
 		ControllerWapper controllerWapper = requestControllerMapper.mapper(httpServletRequest.getPathInfo());
 		if (null != controllerWapper) {
-			ManagedBeanWrapper beanWrapper = ManagedBeanContext.currentContext()
-				.get(controllerWapper.getControllerName());
-			if (null != beanWrapper) {
-				Object controller = beanWrapper.getBean();
+			Object controller = ManagedBeanContext.currentContext()
+				.getBean(controllerWapper.getControllerName());
+			if (null != controller) {
 				InvokerExecuter exectuer = new InvokerExecuter();
 				Method method = controllerWapper.getMethod();
 				exectuer.invoke(method, controller);

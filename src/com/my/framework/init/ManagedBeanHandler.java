@@ -8,7 +8,9 @@ import java.util.Set;
 import org.junit.Test;
 
 import com.my.framework.annotation.AspectParser;
+import com.my.framework.annotation.IAnnotationClassInstantiateParser;
 import com.my.framework.annotation.IAnnotationClassLoadParser;
+import com.my.framework.annotation.InjectResouceParser;
 import com.my.framework.annotation.ServiceParser;
 import com.my.framework.aop.proxy.AdvisedSupport;
 import com.my.framework.aop.proxy.InterceptorAndMethodMatcher;
@@ -47,6 +49,7 @@ public class ManagedBeanHandler {
 		System.out.println(DispatcherContext.dispatcherContext().urlControllerMap().toString());
 
 		clearClassLoadParserList();
+		initClassInstanceParserList();
 		
 		for (Map.Entry<String, ManagedBeanWrapper> entry : ManagedBeanContext.currentContext().beanNameWrapperMap().entrySet()) {
 			ManagedBeanWrapper wrapper = entry.getValue();
@@ -71,18 +74,22 @@ public class ManagedBeanHandler {
 		classLoadParserList.add(new AspectParser());
 	}
 	
+	private void initClassInstanceParserList() {
+		List<IAnnotationClassInstantiateParser> classInstantiateParserList = ManagedBeanContext
+				.currentContext().classInstantiateParserList();
+		classInstantiateParserList.add(new InjectResouceParser());
+	}
+	
 	private void clearClassLoadParserList() {
 		ManagedBeanContext.currentContext().classLoadParserList().clear();
 	}
 
 	private void testController() {
 		ControllerWapper controllerWapper = DispatcherContext.dispatcherContext().urlControllerMap().get("/book/add");
-		ManagedBeanWrapper managedBeanWrapper = ManagedBeanContext.currentContext()
-				.get(controllerWapper.getControllerName());
+		Object controller = ManagedBeanContext.currentContext().getBean(controllerWapper.getControllerName());
 
 		try {
-			Object controller = managedBeanWrapper.getBean();
-			controller.getClass().getMethod(controllerWapper.getMethodName()).invoke(managedBeanWrapper.getBean());
+			controller.getClass().getMethod(controllerWapper.getMethodName()).invoke(controller);
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

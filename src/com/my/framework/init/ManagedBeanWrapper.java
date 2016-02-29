@@ -29,17 +29,17 @@ public class ManagedBeanWrapper {
 		this.clazz = clazz;
 		this.className = clazz.getName();
 		if (isSingleton) {
-			singletonBean = newInstance();
+			singletonBean = newInstance(clazz);
 		}
 	}
 	
-	private Object newInstance() {
+	private Object newInstance(Class<?> interfaceType) {
 		try {
 			Object target = clazz.newInstance();
 			initTarget(target);
 			if (null != advisedSupport) {
 				advisedSupport.setTargetSource(new TargetSource(target));
-				target = proxy(target);
+				target = proxy(target, interfaceType);
 			}
 			return target;
 		} catch (InstantiationException e) {
@@ -75,13 +75,23 @@ public class ManagedBeanWrapper {
 		if (null != singletonBean) {
 			target = singletonBean;
 		}
-		target = newInstance();
+		target = newInstance(this.clazz);
 		System.out.println(target.getClass());
 		return target;
 	}
 	
-	private Object proxy(Object target) {
-		return AopProxyFactory.newDynamicProxy(target.getClass(),advisedSupport).getProxy();
+	public synchronized Object getBean(Class<?> interfaceType) {
+		Object target = null;
+		if (null != singletonBean) {
+			target = singletonBean;
+		}
+		target = newInstance(interfaceType);
+		System.out.println(target.getClass());
+		return target;
+	}
+	
+	private Object proxy(Object target, Class<?> interfaceType) {
+		return AopProxyFactory.newDynamicProxy(interfaceType,advisedSupport).getProxy();
 	}
 	
 	public Class<?> clazz() {

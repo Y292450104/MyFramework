@@ -5,7 +5,6 @@ import java.util.Random;
 
 import com.my.framework.aop.proxy.AdvisedSupport;
 import com.my.framework.aop.proxy.AopProxy;
-import com.my.framework.aop.proxy.CglibDynamicProxy;
 import com.my.framework.aop.proxy.JdkDynamicProxy;
 import com.my.framework.aop.proxy.TargetSource;
 

@@ -4,7 +4,7 @@ import com.my.framework.init.ManagedBeanContext;
 import com.my.framework.init.ManagedBeanWrapper;
 
 
-public class ServiceParser implements IAnnotationClassLoadParser {
+public class ServiceParser implements IAnnotationClassLoadParser{
 
 	@Override
 	public void parse(Class<?> clazz) {
