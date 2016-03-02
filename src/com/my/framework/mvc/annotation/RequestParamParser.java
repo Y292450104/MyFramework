@@ -11,12 +11,12 @@ public class RequestParamParser implements IAnnotationClassInstantiateParser{
 	@Override
 	public void parse(Object newInstance) {
 		// TODO Auto-generated method stub
-		
+		initQueryBeanByRequestParam(newInstance);
 	}
 
 	
-	public static void initQueryBeanByRequestParam(Object queryBean) {
-		Class<?> clazz = queryBean.getClass();
+	public static void initQueryBeanByRequestParam(Object bean) {
+		Class<?> clazz = bean.getClass();
 
 		boolean classParamApply = false;
 		RequestParam classParam = clazz.getAnnotation(RequestParam.class);
@@ -41,7 +41,7 @@ public class RequestParamParser implements IAnnotationClassInstantiateParser{
 
 			if (null != fieldParam) {
 				fieldParamApply = fieldParam.apply();
-				paramName = fieldParam.name();
+				paramName = fieldParam.value();
 				if (RequestParam.fieldNameAsDefaultRequestParamName
 						.equals(paramName)) {
 					paramName = field.getName();
@@ -54,11 +54,13 @@ public class RequestParamParser implements IAnnotationClassInstantiateParser{
 			if (fieldParamApply) {
 				String paramValue = FrameworkWebContext.getReqeust().getParameter(paramName);
 				try {
-					Object object = parseParamByApplyType(field.getType(),
-							paramValue);
+					Object object = parseParamByApplyType(field.getType(), paramValue);
+					System.out.println("fieldName:" + field.getName() + ", fieldType:" + field.getType() 
+						+ ", paramName:" + paramName + ", paramValue:" + paramValue + " fieldValueAtferParam:" + object);
+				
 					if (null != object) {
 						field.setAccessible(true);
-						System.out.println(object);
+						field.set(bean, object);
 						// field.set(queryBean, paramValue);
 					}
 				} catch (Exception e) {
@@ -73,8 +75,7 @@ public class RequestParamParser implements IAnnotationClassInstantiateParser{
 
 	private static Object parseParamByApplyType(Class<?> fieldType,
 			String paramValue) {
-		System.out.println("fieldType:" + fieldType);
-		if (null != paramValue && !"".equals(paramValue)) {
+		if (null == paramValue || "".equals(paramValue.trim())) {
 			return null;
 		}
 
@@ -85,7 +86,7 @@ public class RequestParamParser implements IAnnotationClassInstantiateParser{
 		if (fieldType.equals(int.class) || fieldType.equals(Integer.class)) {
 			return new Integer(paramValue);
 		}
-		if (fieldType.equals(double.class) || fieldType.equals(double.class)) {
+		if (fieldType.equals(double.class) || fieldType.equals(Double.class)) {
 			return new Double(paramValue);
 		}
 		if (fieldType.equals(float.class) || fieldType.equals(Float.class)) {

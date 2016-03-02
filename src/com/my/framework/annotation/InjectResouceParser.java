@@ -21,15 +21,20 @@ public class InjectResouceParser implements IAnnotationClassInstantiateParser {
 			String beanName = resource.value();
 			Object fieldValue = null;
 			boolean hasValue = false;
+			boolean fieldTypeIsInterface = field.getType().isInterface();
+			
 			if (!InjectResource.defaultValue.equals(beanName)) {
-				fieldValue = ManagedBeanContext.currentContext().getBean(beanName);
+				if (fieldTypeIsInterface) {
+					fieldValue = ManagedBeanContext.currentContext().getBean(beanName, field.getType());
+				} else {
+					fieldValue = ManagedBeanContext.currentContext().getBean(beanName);
+				}
+				
 				hasValue = true;
 			}
 			
 			Class<?> type = resource.type();
-			boolean fieldTypeIsInterface = field.getType().isInterface();
 			if (!InjectResource.defaultType.equals(type) && !hasValue) {
-				
 				if (fieldTypeIsInterface) {
 					fieldValue = ManagedBeanContext.currentContext().getBean(type, field.getType());
 				} else {

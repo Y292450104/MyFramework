@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequestParam {
 	public static final String fieldNameAsDefaultRequestParamName = "fieldNameAsDefaultRequestParamName";
-	public String name() default fieldNameAsDefaultRequestParamName;
+	public String value() default fieldNameAsDefaultRequestParamName;
 	public boolean apply() default true;
 }

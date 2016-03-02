@@ -20,10 +20,6 @@ import com.my.framework.mvc.servlet.DispatcherContext;
 
 public class ManagedBeanHandler {
 
-	public ManagedBeanHandler() {
-		// initManagedBeanMap();
-	}
-
 	@Test
 	public void initManagedBeanContext() {
 		System.out.println("ManagedBeanHandler.initManagedBeanMap()");
@@ -31,14 +27,13 @@ public class ManagedBeanHandler {
 		initClassLoadParserList();
 		
 		System.out.println("classSet.size():" + classSet.size());
-		for (Class<?> clazz : classSet) {
+		for (Class<?> clazz : classSet) { // 类初始化解析器
 			for (IAnnotationClassLoadParser parser : ManagedBeanContext.currentContext().classLoadParserList()) {
 				parser.parse(clazz);
 			}
 		}
 
 		System.out.println("\n=================== beanNameWrapperMap =====================");
-
 		Map<String, ManagedBeanWrapper> beanNameWrapperMap = ManagedBeanContext.currentContext().beanNameWrapperMap();
 		for (Map.Entry<String, ManagedBeanWrapper> entry : beanNameWrapperMap.entrySet()) {
 			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< " + entry.getKey() + ":" + entry.getValue());
@@ -50,7 +45,14 @@ public class ManagedBeanHandler {
 
 		clearClassLoadParserList();
 		initClassInstanceParserList();
+		initManagedBeanAdvicedSupport();
 		
+		testController();
+	}
+
+	private void initManagedBeanAdvicedSupport() {
+		// TODO Auto-generated method stub
+		System.out.println("\n=============== initManagedBeanAdvicedSupport ==================");
 		for (Map.Entry<String, ManagedBeanWrapper> entry : ManagedBeanContext.currentContext().beanNameWrapperMap().entrySet()) {
 			ManagedBeanWrapper wrapper = entry.getValue();
 			List<InterceptorAndMethodMatcher> list = ManagedBeanContext.currentContext()
@@ -62,8 +64,7 @@ public class ManagedBeanHandler {
 				wrapper.setAdvisedSupport(advisedSupport);
 			}
 		}
-		
-		testController();
+		System.out.println("");
 	}
 
 	private void initClassLoadParserList() {
@@ -102,7 +103,7 @@ public class ManagedBeanHandler {
 		} catch (NoSuchMethodException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (SecurityException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
