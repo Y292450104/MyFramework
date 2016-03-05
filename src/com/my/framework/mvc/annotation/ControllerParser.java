@@ -9,6 +9,7 @@ import com.my.framework.mvc.servlet.ControllerWapper;
 import com.my.framework.mvc.servlet.DispatcherContext;
 
 public class ControllerParser implements IAnnotationClassLoadParser{
+	public static final String DUFAULT_PATH_SUFFIX = ".do";
 
 	@Override
 	public void parse(Class<?> clazz) {
@@ -33,6 +34,7 @@ public class ControllerParser implements IAnnotationClassLoadParser{
 					String mapperUrl = "";
 					if (MappingPath.methodNameAsDefaultPath.equals(methodUrlAnno.value())) {
 						mapperUrl = controllerUrl + method.getName();
+						mapperUrl += DUFAULT_PATH_SUFFIX;
 					} else {
 						mapperUrl = controllerUrl + methodUrlAnno.value();
 					}

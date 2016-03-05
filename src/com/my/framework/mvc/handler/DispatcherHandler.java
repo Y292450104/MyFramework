@@ -2,6 +2,8 @@ package com.my.framework.mvc.handler;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Date;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -16,38 +18,94 @@ import com.my.framework.mvc.servlet.FrameworkWebContextUtils;
 
 public class DispatcherHandler {
 	public SimpleRequestControllerMapper requestControllerMapper = new SimpleRequestControllerMapper();
-	
+
 	public void service(ServletRequest request, ServletResponse response) throws IOException {
 		// TODO Auto-generated method stub
 		FrameworkWebContextUtils.put(request, response);
 		doService(request, response);
 		FrameworkWebContextUtils.remove();
 	}
-	
+
 	protected void doService(ServletRequest request, ServletResponse response) throws IOException {
-		HttpServletRequest httpServletRequest = (HttpServletRequest)FrameworkWebContext.getReqeust();
-		HttpServletResponse HttpServletResponse = (HttpServletResponse)FrameworkWebContext.getResponse();
+		HttpServletRequest httpServletRequest = (HttpServletRequest) FrameworkWebContext.getReqeust();
+		HttpServletResponse httpServletResponse = (HttpServletResponse) FrameworkWebContext.getResponse();
 		System.out.println("DispatcherServlet service request url : " + httpServletRequest.getRequestURL());
-		
-		ControllerWapper controllerWapper = requestControllerMapper.mapper(httpServletRequest.getPathInfo());
+		System.out.println("DispatcherServlet service MAPPING_PATH : " + getMappingPath(httpServletRequest));
+
+		ControllerWapper controllerWapper = requestControllerMapper.mapper(getMappingPath(httpServletRequest));
 		if (null != controllerWapper) {
-			Object controller = ManagedBeanContext.currentContext()
-				.getBean(controllerWapper.getControllerName());
+			Object controller = ManagedBeanContext.currentContext().getBean(controllerWapper.getControllerName());
 			if (null != controller) {
 				InvokerExecuter exectuer = new InvokerExecuter();
 				Method method = controllerWapper.getMethod();
-				exectuer.invoke(method, controller);
-				return ;
+				Object result = exectuer.invoke(method, controller);
+				boolean dispatchSuccess = dispatchViewAndAnalyzeResponseModel(httpServletRequest, httpServletResponse,
+						result);
+				if (dispatchSuccess) {
+					return;
+				}
 			}
-			
+
 		}
-	
-		HttpServletResponse.sendError(404);	
+		printServletRequestInfo();
+		httpServletResponse.sendError(404);
 	}
 	
+	protected String getMappingPath(HttpServletRequest httpServletRequest) {
+		//httpServletRequest
+		String contextPath = httpServletRequest.getContextPath();
+		String RequestURI = httpServletRequest.getRequestURI();
+		System.out.println(httpServletRequest.getContextPath());
+		System.out.println(httpServletRequest.getRequestURI());
+		return RequestURI.replace(contextPath, "");
+	}
+
+	protected boolean dispatchViewAndAnalyzeResponseModel(HttpServletRequest httpServletRequest,
+			HttpServletResponse httpServletResponse, Object result) {
+		if (result instanceof String) {
+			String responsePath = (String) result;
+			if (responsePath.trim().equals("")) {
+				responsePath = httpServletRequest.getPathInfo();
+			}
+			dispatch(httpServletRequest, httpServletResponse, responsePath);
+			return true;
+		}
+
+		if (result instanceof ModelAndView) {
+			ModelAndView mv = (ModelAndView) result;
+			String responsePath = mv.getView();
+			if (null == responsePath || responsePath.trim().equals("")) {
+				responsePath = httpServletRequest.getPathInfo();
+			}
+
+			Map<String, Object> models = mv.getAttributes();
+			for (Map.Entry<String, Object> entry : models.entrySet()) {
+				httpServletRequest.setAttribute(entry.getKey(), entry.getValue());
+			}
+			dispatch(httpServletRequest, httpServletResponse, responsePath);
+			return true;
+		}
+		return false;
+	}
+
+	protected void dispatch(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+			String responsePath) {
+		try {
+			System.out.println(new Date() + " >>>>>>>>>>>>>>>>> responsePath:" + responsePath);
+			httpServletRequest.getRequestDispatcher(responsePath).forward(httpServletRequest, httpServletResponse);
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	// ========================= TEST ================
 	void printServletRequestInfo() {
-		
-		HttpServletRequest httpServletRequest = (HttpServletRequest)FrameworkWebContext.getReqeust();
+
+		HttpServletRequest httpServletRequest = (HttpServletRequest) FrameworkWebContext.getReqeust();
 		System.out.println(httpServletRequest.getParameterMap());
 		System.out.println(httpServletRequest.getDispatcherType());
 		System.out.println(httpServletRequest.getServletContext());
@@ -76,8 +134,7 @@ public class DispatcherHandler {
 		// System.out.close();
 		System.out.println(httpServletRequest.getRequestURL());
 		System.out.println(httpServletRequest.getUserPrincipal());
-		
-		
+
 		try {
 			httpServletRequest.getParts();
 		} catch (IOException e) {
@@ -87,9 +144,9 @@ public class DispatcherHandler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} // ÎÄ¼þ´«Êä
-		
+
 	}
-	
+
 	protected boolean checkMethod(String methodType, String url) {
 		return true;
 	}

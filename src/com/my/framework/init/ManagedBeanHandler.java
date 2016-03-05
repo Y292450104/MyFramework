@@ -25,7 +25,7 @@ public class ManagedBeanHandler {
 		System.out.println("ManagedBeanHandler.initManagedBeanMap()");
 		Set<Class<?>> classSet = ComponentScanHandler.getClasses("com.my");
 		initClassLoadParserList();
-		
+
 		System.out.println("classSet.size():" + classSet.size());
 		for (Class<?> clazz : classSet) { // 类初始化解析器
 			for (IAnnotationClassLoadParser parser : ManagedBeanContext.currentContext().classLoadParserList()) {
@@ -40,20 +40,22 @@ public class ManagedBeanHandler {
 		}
 
 		System.out.println("\n==================== urlControllerMap ======================");
-		System.out.println("urlControllerMap.size():" + DispatcherContext.dispatcherContext().urlControllerMap().size());
+		System.out
+				.println("urlControllerMap.size():" + DispatcherContext.dispatcherContext().urlControllerMap().size());
 		System.out.println(DispatcherContext.dispatcherContext().urlControllerMap().toString());
 
 		clearClassLoadParserList();
 		initClassInstanceParserList();
 		initManagedBeanAdvicedSupport();
-		
+
 		testController();
 	}
 
 	private void initManagedBeanAdvicedSupport() {
 		// TODO Auto-generated method stub
 		System.out.println("\n=============== initManagedBeanAdvicedSupport ==================");
-		for (Map.Entry<String, ManagedBeanWrapper> entry : ManagedBeanContext.currentContext().beanNameWrapperMap().entrySet()) {
+		for (Map.Entry<String, ManagedBeanWrapper> entry : ManagedBeanContext.currentContext().beanNameWrapperMap()
+				.entrySet()) {
 			ManagedBeanWrapper wrapper = entry.getValue();
 			List<InterceptorAndMethodMatcher> list = ManagedBeanContext.currentContext()
 					.interceptorAndMethodMatcherListByTargetClass(wrapper.clazz());
@@ -69,24 +71,29 @@ public class ManagedBeanHandler {
 
 	private void initClassLoadParserList() {
 		// TODO Auto-generated method stub
-		List<IAnnotationClassLoadParser> classLoadParserList = ManagedBeanContext.currentContext().classLoadParserList();
+		List<IAnnotationClassLoadParser> classLoadParserList = ManagedBeanContext.currentContext()
+				.classLoadParserList();
 		classLoadParserList.add(new ControllerParser());
 		classLoadParserList.add(new ServiceParser());
 		classLoadParserList.add(new AspectParser());
 	}
-	
+
 	private void initClassInstanceParserList() {
-		List<IAnnotationClassInstantiateParser> classInstantiateParserList = ManagedBeanContext
-				.currentContext().classInstantiateParserList();
+		List<IAnnotationClassInstantiateParser> classInstantiateParserList = ManagedBeanContext.currentContext()
+				.classInstantiateParserList();
 		classInstantiateParserList.add(new InjectResouceParser());
 	}
-	
+
 	private void clearClassLoadParserList() {
 		ManagedBeanContext.currentContext().classLoadParserList().clear();
 	}
 
 	private void testController() {
 		ControllerWapper controllerWapper = DispatcherContext.dispatcherContext().urlControllerMap().get("/book/add");
+		if (null == controllerWapper) {
+			return;
+		}
+
 		Object controller = ManagedBeanContext.currentContext().getBean(controllerWapper.getControllerName());
 
 		try {

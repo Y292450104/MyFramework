@@ -11,7 +11,7 @@ public class RequestParamHander {
 	public static <T> T initBeanByRequestParam(Class<T> clazz) {
 		try {
 			T object = clazz.newInstance();
-			RequestParamParser.initQueryBeanByRequestParam(clazz.newInstance());
+			RequestParamParser.initQueryBeanByRequestParam(object);
 			return object;
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block

@@ -22,9 +22,10 @@ public class InvokerExecuter {
 
 	public Object invoke(Method method, Object instance, Object... args) {
 		// Method method = clazz.getMethod(methodName);
+		Object result = null;
 		try {
 			System.out.println(new Date() + " >>>>>>>>>>> before invoke InvokerExecuter!");
-			method.invoke(instance, args);
+			result = method.invoke(instance, args);
 			System.out.println(new Date() + " >>>>>>>>>>> After invoke InvokerExecuter!");
 			
 		} catch (IllegalAccessException e) {
@@ -38,6 +39,6 @@ public class InvokerExecuter {
 			e.printStackTrace();
 		}
 
-		return null;
+		return result;
 	}
 }
