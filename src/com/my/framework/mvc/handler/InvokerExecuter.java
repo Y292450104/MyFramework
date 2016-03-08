@@ -34,7 +34,7 @@ public class InvokerExecuter {
 			}
 
 			if (ModelMap.class.isAssignableFrom(param.getType())) {
-				args[index++] = new ModelMap();
+				args[index++] = new ModelMap(request);
 				continue;
 			}
 

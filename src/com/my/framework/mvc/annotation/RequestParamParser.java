@@ -9,6 +9,7 @@ import com.my.framework.mvc.servlet.FrameworkWebContext;
 
 public class RequestParamParser {
 
+	@Deprecated
 	public static void parse(Object newInstance) {
 		// TODO Auto-generated method stub
 		_initQueryBeanByRequestParam(newInstance, null);

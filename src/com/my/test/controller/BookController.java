@@ -8,6 +8,7 @@ import com.my.framework.mvc.annotation.MappingPath;
 import com.my.framework.mvc.handler.ModelAndView;
 import com.my.framework.mvc.handler.ModelMap;
 import com.my.framework.mvc.handler.RequestParamHander;
+import com.my.framework.mvc.servlet.FrameworkWebContext;
 import com.my.test.bean.BookBean;
 import com.my.test.service.IBookService;
 
@@ -26,7 +27,7 @@ public class BookController {
 	private IBookService bookService;
 
 	@MappingPath("add.do")
-	public ModelAndView add() {
+	public ModelAndView add(ModelMap modelMap) {
 		// ManagedBeanWrapper wrapper =
 		// ManagedBeanContext.currentContext().get(BookFacadeImpl.class.getName());
 		// ((BookFacade)wrapper.getBean()).addBook();
@@ -42,20 +43,24 @@ public class BookController {
 
 		// BookBean book = new BookBean();
 		// RequestParamHander.initBeanByRequestParam(book);
-		BookBean book = RequestParamHander.initBeanByRequestParam(BookBean.class);
+		BookBean book = new RequestParamHander(FrameworkWebContext.getReqeust()).initBeanByRequestParam(BookBean.class);
+		System.out.println(book);
+		bookService.addBook(book);
+
+		book = modelMap.requestParamHander().initBeanByRequestParam(BookBean.class);
 		System.out.println(book);
 		bookService.addBook(book);
 
 		ModelAndView mv = new ModelAndView("/book_add_response.jsp");
 		mv.setAttribute("book", book);
-		mv.setAttribute("message", "success");
+		mv.setAttribute("message", "add success");
 		return mv;
 	}
 
 	@MappingPath
 	public String del(ModelMap modelMap) {
 		System.out.println("BookController del");
-		BookBean book = RequestParamHander.initBeanByRequestParam(BookBean.class);
+		BookBean book = modelMap.requestParamHander().initBeanByRequestParam(BookBean.class);
 		System.out.println(book);
 		bookService.addBook(book);
 
@@ -67,7 +72,7 @@ public class BookController {
 	@MappingPath
 	public String get(HttpServletRequest request, ModelMap modelMap) {
 		System.out.println("BookController del");
-		BookBean book = RequestParamHander.initBeanByRequestParam(BookBean.class, request);
+		BookBean book = new RequestParamHander(request).initBeanByRequestParam(BookBean.class);
 		System.out.println(book);
 		bookService.addBook(book);
 
