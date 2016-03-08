@@ -3,19 +3,27 @@ package com.my.framework.mvc.annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import com.my.framework.annotation.IAnnotationClassInstantiateParser;
+import javax.servlet.ServletRequest;
+
 import com.my.framework.mvc.servlet.FrameworkWebContext;
 
-public class RequestParamParser implements IAnnotationClassInstantiateParser{
+public class RequestParamParser {
 
-	@Override
-	public void parse(Object newInstance) {
+	public static void parse(Object newInstance) {
 		// TODO Auto-generated method stub
-		initQueryBeanByRequestParam(newInstance);
+		_initQueryBeanByRequestParam(newInstance, null);
 	}
 
-	
-	public static void initQueryBeanByRequestParam(Object bean) {
+	/**
+	 * 性能更好
+	 * @param bean
+	 * @param request
+	 */
+	public static void parse(Object bean, ServletRequest request) {
+		_initQueryBeanByRequestParam(bean, request);
+	}
+
+	private static void _initQueryBeanByRequestParam(Object bean, ServletRequest request) {
 		Class<?> clazz = bean.getClass();
 
 		boolean classParamApply = false;
@@ -29,6 +37,10 @@ public class RequestParamParser implements IAnnotationClassInstantiateParser{
 		}
 
 		Field[] fields = clazz.getDeclaredFields();
+		if (null == request) {
+			request = FrameworkWebContext.getReqeust();
+		}
+
 		for (Field field : fields) {
 			int modifiers = field.getModifiers();
 			if (Modifier.isFinal(modifiers) || Modifier.isStatic(modifiers)) {
@@ -42,8 +54,7 @@ public class RequestParamParser implements IAnnotationClassInstantiateParser{
 			if (null != fieldParam) {
 				fieldParamApply = fieldParam.apply();
 				paramName = fieldParam.value();
-				if (RequestParam.fieldNameAsDefaultRequestParamName
-						.equals(paramName)) {
+				if (RequestParam.fieldNameAsDefaultRequestParamName.equals(paramName)) {
 					paramName = field.getName();
 				}
 			} else if (classParamApply) {
@@ -52,12 +63,13 @@ public class RequestParamParser implements IAnnotationClassInstantiateParser{
 			}
 
 			if (fieldParamApply) {
-				String paramValue = FrameworkWebContext.getReqeust().getParameter(paramName);
+				String paramValue = request.getParameter(paramName);
 				try {
 					Object object = parseParamByApplyType(field.getType(), paramValue);
-					System.out.println("fieldName:" + field.getName() + ", fieldType:" + field.getType() 
-						+ ", paramName:" + paramName + ", paramValue:" + paramValue + " fieldValueAtferParam:" + object);
-				
+					System.out
+							.println("fieldName:" + field.getName() + ", fieldType:" + field.getType() + ", paramName:"
+									+ paramName + ", paramValue:" + paramValue + " fieldValueAtferParam:" + object);
+
 					if (null != object) {
 						field.setAccessible(true);
 						field.set(bean, object);
@@ -73,8 +85,7 @@ public class RequestParamParser implements IAnnotationClassInstantiateParser{
 
 	}
 
-	private static Object parseParamByApplyType(Class<?> fieldType,
-			String paramValue) {
+	private static Object parseParamByApplyType(Class<?> fieldType, String paramValue) {
 		if (null == paramValue || "".equals(paramValue.trim())) {
 			return null;
 		}
@@ -112,8 +123,7 @@ public class RequestParamParser implements IAnnotationClassInstantiateParser{
 			return null;
 		}
 
-		System.out.println("parseStringToApplyType error: fieldType:"
-				+ fieldType + " parse error!");
+		System.out.println("parseStringToApplyType error: fieldType:" + fieldType + " parse error!");
 		return null;
 	}
 }

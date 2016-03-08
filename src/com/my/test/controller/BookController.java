@@ -1,9 +1,12 @@
 package com.my.test.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.my.framework.annotation.InjectResource;
 import com.my.framework.mvc.annotation.Controller;
 import com.my.framework.mvc.annotation.MappingPath;
 import com.my.framework.mvc.handler.ModelAndView;
+import com.my.framework.mvc.handler.ModelMap;
 import com.my.framework.mvc.handler.RequestParamHander;
 import com.my.test.bean.BookBean;
 import com.my.test.service.IBookService;
@@ -12,7 +15,8 @@ import com.my.test.service.IBookService;
  * 
  * @author Administrator
  *
- *	input: http://localhost:8080/MyFramework/book/add.do?book_id=1&book_name=2&book_price=1.5
+ * @input: http://localhost:8080/MyFramework/book/add.do?book_id=1&book_name=2&
+ *         book_price=1.5
  */
 
 @Controller
@@ -49,7 +53,26 @@ public class BookController {
 	}
 
 	@MappingPath
-	public void del() {
+	public String del(ModelMap modelMap) {
 		System.out.println("BookController del");
+		BookBean book = RequestParamHander.initBeanByRequestParam(BookBean.class);
+		System.out.println(book);
+		bookService.addBook(book);
+
+		modelMap.setAttribute("book", book);
+		modelMap.setAttribute("message", "del success");
+		return "/book_add_response.jsp";
+	}
+
+	@MappingPath
+	public String get(HttpServletRequest request, ModelMap modelMap) {
+		System.out.println("BookController del");
+		BookBean book = RequestParamHander.initBeanByRequestParam(BookBean.class, request);
+		System.out.println(book);
+		bookService.addBook(book);
+
+		modelMap.setAttribute("book", book);
+		modelMap.setAttribute("message", "get success");
+		return "/book_add_response.jsp";
 	}
 }

@@ -17,7 +17,8 @@ import com.my.framework.mvc.servlet.FrameworkWebContext;
 import com.my.framework.mvc.servlet.FrameworkWebContextUtils;
 
 public class DispatcherHandler {
-	public SimpleRequestControllerMapper requestControllerMapper = new SimpleRequestControllerMapper();
+	private SimpleRequestControllerMapper requestControllerMapper = new SimpleRequestControllerMapper();
+	private InvokerExecuter executer = new InvokerExecuter();
 
 	public void service(ServletRequest request, ServletResponse response) throws IOException {
 		// TODO Auto-generated method stub
@@ -27,8 +28,8 @@ public class DispatcherHandler {
 	}
 
 	protected void doService(ServletRequest request, ServletResponse response) throws IOException {
-		HttpServletRequest httpServletRequest = (HttpServletRequest) FrameworkWebContext.getReqeust();
-		HttpServletResponse httpServletResponse = (HttpServletResponse) FrameworkWebContext.getResponse();
+		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 		System.out.println("DispatcherServlet service request url : " + httpServletRequest.getRequestURL());
 		System.out.println("DispatcherServlet service MAPPING_PATH : " + getMappingPath(httpServletRequest));
 
@@ -36,23 +37,24 @@ public class DispatcherHandler {
 		if (null != controllerWapper) {
 			Object controller = ManagedBeanContext.currentContext().getBean(controllerWapper.getControllerName());
 			if (null != controller) {
-				InvokerExecuter exectuer = new InvokerExecuter();
 				Method method = controllerWapper.getMethod();
-				Object result = exectuer.invoke(method, controller);
+				Object[] args = executer.args(method, httpServletRequest, httpServletResponse);
+				Object result = executer.invoke(method, controller, args);
+
 				boolean dispatchSuccess = dispatchViewAndAnalyzeResponseModel(httpServletRequest, httpServletResponse,
-						result);
+						result, executer.getModelMapByArgs(args));
 				if (dispatchSuccess) {
 					return;
 				}
 			}
 
 		}
-		printServletRequestInfo();
+		// printServletRequestInfo();
 		httpServletResponse.sendError(404);
 	}
-	
+
 	protected String getMappingPath(HttpServletRequest httpServletRequest) {
-		//httpServletRequest
+		// httpServletRequest
 		String contextPath = httpServletRequest.getContextPath();
 		String RequestURI = httpServletRequest.getRequestURI();
 		System.out.println(httpServletRequest.getContextPath());
@@ -61,7 +63,13 @@ public class DispatcherHandler {
 	}
 
 	protected boolean dispatchViewAndAnalyzeResponseModel(HttpServletRequest httpServletRequest,
-			HttpServletResponse httpServletResponse, Object result) {
+			HttpServletResponse httpServletResponse, Object result, ModelMap modelMap) {
+		if (null != modelMap) {
+			for (Map.Entry<String, Object> entry : modelMap.entrySet()) {
+				httpServletRequest.setAttribute(entry.getKey(), entry.getValue());
+			}
+		}
+
 		if (result instanceof String) {
 			String responsePath = (String) result;
 			if (responsePath.trim().equals("")) {
